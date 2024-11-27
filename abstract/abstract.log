@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.141592653-p4.0.0-220214-2.6 (utf8.sjis) (TeX Live 2022) (preloaded format=platex 2023.3.13)  27 NOV 2024 17:31
+This is e-pTeX, Version 3.141592653-p4.0.0-220214-2.6 (utf8.sjis) (TeX Live 2022) (preloaded format=platex 2023.3.13)  27 NOV 2024 17:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -538,10 +538,10 @@ See the caption package documentation for explanation.
 Here is how much of TeX's memory you used:
  12977 strings out of 476707
  267319 string characters out of 5808795
- 1865203 words of memory out of 5000000
+ 1864203 words of memory out of 5000000
  33239 multiletter control sequences out of 15000+600000
  534615 words of font info for 121 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  71i,11n,77p,489b,1019s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on abstract.dvi (1 page, 8764 bytes).
+Output written on abstract.dvi (1 page, 7768 bytes).
