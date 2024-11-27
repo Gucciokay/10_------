@@ -65,7 +65,7 @@
 %%
 
 
-\jtitle{\fontsize{13pt}{0pt}相互通信可能な分子通信系シミュレーションによる濃度依存性の検証}
+\jtitle{\fontsize{13pt}{0pt}相互に通信する分子通信系シミュレーションによる濃度依存性の検証}
 \etitle{Two-step reinforcement learning for model-free redesign of nonlinear optimal regulator}
 \lab{堀}
 \no{82411805}
@@ -79,9 +79,25 @@
 系は細胞内での化学反応と細胞間のシグナル分子の伝達によって構成されている．
 分子通信系では，系内部の細胞の濃度が系全体の状態に影響を与えることが知られているが，
 その量的な関係を調べた研究は少ない．
+% 細胞の濃度を帰ると系内部の細胞の状態が変化する例が存在
+% シミュレーションを用いて量的な関係を調べたものが少ない
+% 受信細胞の時間発展に特化したシミュレーション法が存在
+% この方法は送信機と受信機を区別しているため，相互に通信することができないという問題が存在
+% そこで，受信細胞に到達する確率分布が時間シフトであり，分布が変化しないことに着目
+% 受信細胞内でシグナル分子が生成されたら到達時刻を計算した確率分布から計算する
+% これにより相互通信ができるシミュレーション法ができる
 
 
 \section{相互通信可能な分子通信系}
+1次元の分子通信系において，時刻$t=t_0$に放出された分子が時刻$t$，位置$[\xi,\xi+d\xi)$に存在する確率を
+$p(\xi,t|t_0)$とするとき，次の拡散方程式が成立する．
+\begin{equation}
+    \frac{\partial p(\xi,t|t_0)}{\partial t} = \mu \frac{\partial^2p(\xi,t|t_0)}{\partial\xi^2}
+\end{equation}
+この時，文献1において，位置$\xi =\xi_1$に到達する確率分布は
+\begin{equation}
+    F(t) = 1- \int_{-\infty}^{\xi_1} p(\xi,t)d\xi
+\end{equation}
 % 状態$\bm{x}_{k} \in \mathbb{R}^{n}$，入力$\bm{u}_{k} \in \mathbb{R}^{m}$に関するコスト関数
 % \begin{align}
 %     \sum^{\infty}_{k=0} \gamma^{k} (\bm{x}_{k}^\top Q \bm{x}_{k} + \bm{u}_{k}^\top R \bm{u}_{k})
@@ -119,15 +135,13 @@
 % 線形制御則$K^{\rm{AC}}$が存在することで，学習中にシステムが不安定になることを防ぎ，損耗を防ぐことができる．
 % この二段階の設計手法による制御則は，線形制御則だけでは実現できない性能を達成する．
 
+\section{数値例による検証}
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\columnwidth] {figures/Images.pdf}
     \caption{Image of 1 dimension Molecular Communication System}
     \label{fig:image}
 \end{figure}
-
-
-\section{数値例による検証}
 Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$3.0\times10^{-4}$，細胞間距離を$L$とする．
 ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
 \begin{equation}
@@ -137,15 +151,15 @@ Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分�
 \begin{equation}
     \mathrm{Y} \xrightarrow{k_5} \mathrm{X}
 \end{equation}
-この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，細胞$1$における分子$B$の時間発展を$1000$回シミュレーションし，
+この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，細胞$1$における分子$\mathrm{B}$の時間発展を$10^4$回シミュレーションし，
 その平均を$L=\SI{0.1}{\um},$ $\SI{0.2}{\um},$ $\SI{0.3}{\um},$ $\SI{0.4}{\um},$ $\SI{0.5}{\um}$に対して計算した．
 ただし，$k_1 = \SI{5.0}{\per\mm}$，$k_2 = \log(2)/20\ \si{\per\mm}$，$k_3=k_4=k_5=\SI{0.02}{\per\mm}$とした．
 この時，各$L$に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
-Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子Bの過渡応答が急峻であり，距離依存性を持つことが確認できる．
+Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B}$の過渡応答が急峻であり，距離依存性を持つことが確認できる．
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\columnwidth]{figures/step2_cost_fig.pdf}
+    \includegraphics[width=\columnwidth]{figures/figure_name.pdf}
     \caption{Comparison of the time evolution of the average number of B among each $L$}
     \label{fig:simulation}
 \end{figure}
