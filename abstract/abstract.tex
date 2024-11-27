@@ -129,23 +129,24 @@
 
 \section{数値例による検証}
 Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$3.0\times10^{-4}$，細胞間距離を$L$とする．
-ここで細胞1内部には分子$\mathrm{A}$,$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
+ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
 \begin{equation}
-    \emptyset \xrightarrow{k_1} \mathrm{A},\mathrm{X}+\mathrm{A} \xrightarrow{k_2} \mathrm{B}, \mathrm{B} \xrightarrow{k_3} \emptyset, \mathrm{B}+\mathrm{B}\xrightarrow{k_3} \mathrm{B:B} +\mathrm{Y}
+    \emptyset \xrightarrow{k_1} \mathrm{A},\mathrm{X}+\mathrm{A} \xrightarrow{k_2} \mathrm{B}, \mathrm{B} \xrightarrow{k_3} \emptyset, \mathrm{B}+\mathrm{B}\xrightarrow{k_4} \mathrm{B:B} +\mathrm{Y}
 \end{equation}
 細胞2内部には分子$\mathrm{Y}$が存在し，次の反応によってシグナル分子$\mathrm{X}$を放出する．
 \begin{equation}
-    \mathrm{Y} \xrightarrow{k_4} \mathrm{X}
+    \mathrm{Y} \xrightarrow{k_5} \mathrm{X}
 \end{equation}
-この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$100$個放出されたとき，細胞$1$における分子$B$の時間発展を$1000$回シミュレーションし，
-その平均を$L=\SI{0.1}{\milli\meter},$ $\SI{0.2}{\milli\meter},$ $\SI{0.3}{\milli\meter},$ $\SI{0.4}{\milli\meter},$ $\SI{0.5}{\milli\meter}$に対して計算した．
-それぞれの細胞間距離に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
+この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，細胞$1$における分子$B$の時間発展を$1000$回シミュレーションし，
+その平均を$L=\SI{0.1}{\um},$ $\SI{0.2}{\um},$ $\SI{0.3}{\um},$ $\SI{0.4}{\um},$ $\SI{0.5}{\um}$に対して計算した．
+ただし，$k_1 = \SI{5.0}{\per\mm}$，$k_2 = \log(2)/20\ \si{\per\mm}$，$k_3=k_4=k_5=\SI{0.02}{\per\mm}$とした．
+この時，各$L$に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
 Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子Bの過渡応答が急峻であり，距離依存性を持つことが確認できる．
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\columnwidth]{figures/step2_cost_fig.pdf}
-    \caption{Comparison of the time evolution of the average number of B between $L$}
+    \caption{Comparison of the time evolution of the average number of B among each $L$}
     \label{fig:simulation}
 \end{figure}
 
