@@ -53,12 +53,16 @@
 \usepackage{comment} %\begin{comment} ~ \end{comment}でコメントアウトできる．
 %%
 %%package related to pdf
-\usepackage{pdfpages}
+%\usepackage{pdfpages}
 
 \usepackage{mathtools}
 \usepackage[labelformat=parens, justification=raggedright]{subcaption}
-\newcommand{\rfig}[1]{Fig.~\ref{#1}}
-\newcommand{\req}[1]{式\eqref{#1}}
+% \newcommand{\rfig}[1]{Fig.~\ref{#1}}
+% \newcommand{\req}[1]{式\eqref{#1}}
+%%command to erase trivial cautions  
+\DeclareFontShape{JY1}{hmc}{b}{n}{<->ssub*hmc/bx/n}{} % Font shape `JY1/hmc/b/n' undefined (Font) using `JY1/hmc/bx/n' instead.のエラーメッセージを消すコマンド．
+\DeclareFontShape{JT1}{hmc}{b}{n}{<->ssub*hmc/m/n}{} %LaTeX Font: Font shape `JT1/hmc/b/n' undefined　(Font)	using `JT1/hmc/m/n' instead.のエラーメッセージを消すコマンド．
+%%
 
 
 \jtitle{\fontsize{13pt}{0pt}相互通信可能な分子通信系シミュレーションによる濃度依存性の検証}
@@ -78,62 +82,70 @@
 
 
 \section{相互通信可能な分子通信系}
-状態$\bm{x}_{k} \in \mathbb{R}^{n}$，入力$\bm{u}_{k} \in \mathbb{R}^{m}$に関するコスト関数
-\begin{align}
-    \sum^{\infty}_{k=0} \gamma^{k} (\bm{x}_{k}^\top Q \bm{x}_{k} + \bm{u}_{k}^\top R \bm{u}_{k})
-    \label{eq:cost_equation}
-\end{align}
-を最小にするような制御器を設計する問題を考える．ただし，$Q \in \mathbb{R}^{n \times n}, R \in \mathbb{R}^{m \times m}$はそれぞれ半正定値，正定値行列であり，$\gamma \in (0, 1)$は
-%割引率と呼ばれる
-定数である．
-この問題に対し，\rfig{fig:proposed_method}で表される制御器の設計を2つのステップに分けて行う．
-
-Step~1ではまず，既知の安定なフィードバックゲイン$K^{\mathrm{init}}$を用い，探索項を印加しながらシステムを動かすことで入力と状態の時系列データを取得する．
-その後，ベルマン方程式から導出される関係式
-\begin{align}
-F ^j [\textrm{vec}(G^{j+1}_1)^\top ,\textrm{vec}(G^{j+1}_2)^\top ,\textrm{vec}(G^{j+1}_3)^\top]^\top=\bm{h}^j
-\label{update_equation}
-\end{align}
-によって$G^{j+1}_i,~i=1,2,3$
-を更新し，
-$K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}$
+% 状態$\bm{x}_{k} \in \mathbb{R}^{n}$，入力$\bm{u}_{k} \in \mathbb{R}^{m}$に関するコスト関数
 % \begin{align}
-%     K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}
+%     \sum^{\infty}_{k=0} \gamma^{k} (\bm{x}_{k}^\top Q \bm{x}_{k} + \bm{u}_{k}^\top R \bm{u}_{k})
+%     \label{eq:cost_equation}
 % \end{align}
-に代入することで
-%フィードバックゲイン
-$K^j$の更新を行う．
-ただし，$\bm{h}^{j}$は各時刻における
-二次コストに関するベクトル，
-$F^{j}$は入力と状態に関する行列，
-$G^{j+1}_i$は
-コスト関数に関する行列であり，
-$F^j,~ \bm{h}^j$は取得した時系列データと$K^j$から計算される．
-$||K^j-K^{j-1}||$が閾値以下になったら更新を終了し，このときの$K^j$を$K^{\rm{AC}}$とする．更新される$K^{j}$は，準最適線形LQR制御則に収束する．
+% を最小にするような制御器を設計する問題を考える．ただし，$Q \in \mathbb{R}^{n \times n}, R \in \mathbb{R}^{m \times m}$はそれぞれ半正定値，正定値行列であり，$\gamma \in (0, 1)$は
+% %割引率と呼ばれる
+% 定数である．
+% この問題に対し，\rfig{fig:proposed_method}で表される制御器の設計を2つのステップに分けて行う．
 
-Step~2では，Step~1で設計された線形制御器と並列に繋げた非線形制御則$\bm{\mu}$を強化学習の一種であるActor-Critic法\cite{Sutton_RL}によって設計する．
-線形制御則$K^{\rm{AC}}$が存在することで，学習中にシステムが不安定になることを防ぎ，損耗を防ぐことができる．
-この二段階の設計手法による制御則は，線形制御則だけでは実現できない性能を達成する．
+% Step~1ではまず，既知の安定なフィードバックゲイン$K^{\mathrm{init}}$を用い，探索項を印加しながらシステムを動かすことで入力と状態の時系列データを取得する．
+% その後，ベルマン方程式から導出される関係式
+% \begin{align}
+% F ^j [\textrm{vec}(G^{j+1}_1)^\top ,\textrm{vec}(G^{j+1}_2)^\top ,\textrm{vec}(G^{j+1}_3)^\top]^\top=\bm{h}^j
+% \label{update_equation}
+% \end{align}
+% によって$G^{j+1}_i,~i=1,2,3$
+% を更新し，
+% $K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}$
+% % \begin{align}
+% %     K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}
+% % \end{align}
+% に代入することで
+% %フィードバックゲイン
+% $K^j$の更新を行う．
+% ただし，$\bm{h}^{j}$は各時刻における
+% 二次コストに関するベクトル，
+% $F^{j}$は入力と状態に関する行列，
+% $G^{j+1}_i$は
+% コスト関数に関する行列であり，
+% $F^j,~ \bm{h}^j$は取得した時系列データと$K^j$から計算される．
+% $||K^j-K^{j-1}||$が閾値以下になったら更新を終了し，このときの$K^j$を$K^{\rm{AC}}$とする．更新される$K^{j}$は，準最適線形LQR制御則に収束する．
+
+% Step~2では，Step~1で設計された線形制御器と並列に繋げた非線形制御則$\bm{\mu}$を強化学習の一種であるActor-Critic法\cite{Sutton_RL}によって設計する．
+% 線形制御則$K^{\rm{AC}}$が存在することで，学習中にシステムが不安定になることを防ぎ，損耗を防ぐことができる．
+% この二段階の設計手法による制御則は，線形制御則だけでは実現できない性能を達成する．
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\columnwidth] {figures/model_free_two_step_controller_design_characterless.pdf}
     \caption{Structure of the proposed method}
-    \label{fig:proposed_method}
+    \label{fig:image}
 \end{figure}
 
 
 \section{数値例による検証}
-数値シミュレーションを用いて，次のような相互通信可能な1次元分子通信系を考える．
-Fig. にあるように，1次元分子通信系において細胞が2つ存在し，
-数値シミュレーションを用いて，提案法 ($K^{\mathrm{AC}}$ + RL) ，$K^{\mathrm{init}}$と強化学習を組み合わせた方法（$K^{\mathrm{init}}$ + RL），強化学習単独(RL alone) ，補助制御器単独 ($K^{\mathrm{AC}}$ alone) の4つの場合について，倒立振子の制御器設計を行った．
-Step 2における各試行ごとの二次コストを\rfig{fig:simulation}に示す．
-\rfig{fig:simulation}より，提案法は他の方法と比べて，学習初期のコストが小さく，過渡学習性能が良いことが示された．
+Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$3.0\times10^{-4}$，細胞間距離を$L$とする．
+ここで細胞1内部には分子$\mathrm{A}$,$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
+\begin{equation}
+    \emptyset \xrightarrow{k_1} \mathrm{A},\mathrm{X}+\mathrm{A} \xrightarrow{k_2} \mathrm{B}, \mathrm{B} \xrightarrow{k_3} \emptyset, \mathrm{B}+\mathrm{B}\xrightarrow{k_3} \mathrm{B:B} +\mathrm{Y}
+\end{equation}
+細胞2内部には分子$\mathrm{Y}$が存在し，次の反応によってシグナル分子$\mathrm{X}$を放出する．
+\begin{equation}
+    \mathrm{Y} \xrightarrow{k_4} \mathrm{X}
+\end{equation}
+この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$100$個放出されたとき，細胞$1$における分子$B$の時間発展を$1000$回シミュレーションし，
+その平均を$L=\SI{0.1}{\milli\meter},$ $\SI{0.2}{\milli\meter},$ $\SI{0.3}{\milli\meter},$ $\SI{0.4}{\milli\meter},$ $\SI{0.5}{\milli\meter}$に対して計算した．
+それぞれの細胞間距離に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
+Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子Bの過渡応答が急峻であり，距離依存性を持つことが確認できる．
+
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\columnwidth]{figures/step2_cost_fig.pdf}
-    \caption{Cost $J_\mathrm{fin}(k_{\mathrm{fin}})$ in each trial in Step~2. Inset is plotted with in a different scale of the vertical access. %to high-light the average cost at the end the learning process.
-    }
+    \caption{Comparison of the time evolution of the average number of B between $L$}
     \label{fig:simulation}
 \end{figure}
 
@@ -141,7 +153,7 @@ Step 2における各試行ごとの二次コストを\rfig{fig:simulation}に�
 \section{結論と今後の展望}
 本稿では，密度依存的な分子通信系のシミュレーション法構築に向けて，
 相互通信可能な１次元の分子通信系の数値シミュレーションを行った．
-具体的には，細胞内でシグナル分子が作成
+具体的には，
 
 
 
