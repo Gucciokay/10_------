@@ -65,8 +65,8 @@
 %%
 
 
-\jtitle{\fontsize{13pt}{0pt}相互に通信する分子通信系シミュレーションによる濃度依存性の検証}
-\etitle{Two-step reinforcement learning for model-free redesign of nonlinear optimal regulator}
+\jtitle{\fontsize{13pt}{0pt}RDSSAを用いた相互に通信する分子通信系シミュレーション法構築}
+\etitle{The Construction of Simulation Method for Mutual Molecular Communication System \\ using RDSSA}
 \lab{堀}
 \no{82411805}
 \name{川口竜輝}
@@ -74,90 +74,40 @@
 \maketitle
 
 \section{研究背景・目的}
-自然界において，細胞はシグナル分子と呼ばれる伝達物質を別の細胞に送ることで
-情報の伝達を行っている．このような細胞間の情報伝達を相互に行う系は分子通信系と呼ばれ，
-系は細胞内での化学反応と細胞間のシグナル分子の伝達によって構成されている．
-分子通信系では，系内部の細胞の濃度が系全体の状態に影響を与えることが知られているが，
-相互作用を行う分子通信系において
-% 自然界において、細胞はシグナル分子と呼ばれる伝達物質を別の細胞に送ることで情報を伝達しています。
-% このような細胞間で情報をやり取りするシステムは分子通信系と呼ばれ、主に細胞内での化学反応と細胞間のシグナル分子の伝達によって構成されています。
-% 分子通信系においては、系内部の細胞濃度が系全体の状態に大きな影響を与えることが知られています。
-% しかしながら、これまでの研究では、細胞濃度がどのように系内部の細胞の状態を変化させるのかを定量的に調べたシミュレーションは少ないのが現状です。
-% また、受信細胞の時間発展に特化したシミュレーション手法も存在しますが、
-% これらは送信細胞と受信細胞を明確に区別しているため、
-% 相互通信を考慮することができないという制約がありました。
-% こうした問題を解決するため、本研究では新たなアプローチを提案します。
-% 本研究では、受信細胞に到達するシグナル分子の確率分布が時間的にシフトするだけであり、
-% その形状が変化しないことに着目しました。
-% この特性を活用し、受信細胞内でシグナル分子が生成された場合に、到達時刻の確率分布を用いて計算を行う手法を構築しました。
-% この手法により、従来の方法では困難であった送信細胞と受信細胞間の相互通信を再現可能なシミュレーションを実現します。
-% 本手法は、分子通信系の相互作用に関する定量的な解析を可能とするだけでなく、
-% 複雑な細胞間通信の挙動を詳細にモデル化する新たな枠組みを提供するものです。
-
-% 細胞の濃度を帰ると系内部の細胞の状態が変化する例が存在
-% シミュレーションを用いて量的な関係を調べたものが少ない
-% 受信細胞の時間発展に特化したシミュレーション法が存在
-% この方法は送信機と受信機を区別しているため，相互に通信することができないという問題が存在
-% そこで，受信細胞に到達する確率分布が時間シフトであり，分布が変化しないことに着目
-% 受信細胞内でシグナル分子が生成されたら到達時刻を計算した確率分布から計算する
-% これにより相互通信ができるシミュレーション法ができる
-
+細胞は伝達物質であるシグナル分子を別の細胞に送り，細胞内で化学反応が発生し，
+それによる濃度変化を情報として伝達する．
+このような細胞間で情報を相互に伝達する系は分子通信系と呼ばれる．
+分子通信系では，系内部の分子が少数であるため，化学反応や分子の伝達が確率的におこり，
+細胞内部の分子数変化が情報となる．
+分子通信系においては，系内部の細胞濃度が系全体の状態に大きな影響を与えることが知られているが，
+細胞濃度がどのように系の状態を変化させるのかを定量的に調べた研究\cite{Yamagishi}では，
+情報として受け取る各細胞内部の分子数変化のシミュレーション時間が長いという課題があった．
+そこで，細胞内部の分子数変化を高速に計算するReaction-Diffusion Stochastic Simulation Algorithm (RDSSA)\cite{hara}がつくられたが，
+相互通信するうえで送信細胞と受信細胞が区別されているという問題があった．
+そこで，本研究ではシグナル分子が到達する確率分布が分子の放出時刻
+だけ時間変化する点に着目し，RDSSA\cite{hara}に適用させることで，
+相互に通信する分子通信系をシミュレーションし，その濃度依存性を検証する．
 
 \section{相互通信可能な分子通信系}
 1次元の分子通信系において，時刻$t=t_0$に放出された分子が時刻$t$，位置$[\xi,\xi+d\xi)$に存在する確率を
-$p(\xi,t|t_0)$とするとき，次の拡散方程式が成立する．
+$p(\xi,t|t_0)$とするとき，$p(\xi,t|t_0)$は拡散方程式に従い，分子が位置$\xi =\xi_1$に到達する確率$F(t)$は
 \begin{equation}
-    \frac{\partial p(\xi,t|t_0)}{\partial t} = \mu \frac{\partial^2p(\xi,t|t_0)}{\partial\xi^2}
+    F(t) = 1- \int_{-\infty}^{\xi_1} p(\xi,t|t_0)d\xi
 \end{equation}
-この時，文献1において，位置$\xi =\xi_1$に到達する確率分布は
-\begin{equation}
-    F(t) = 1- \int_{-\infty}^{\xi_1} p(\xi,t)d\xi
-\end{equation}
-% 状態$\bm{x}_{k} \in \mathbb{R}^{n}$，入力$\bm{u}_{k} \in \mathbb{R}^{m}$に関するコスト関数
-% \begin{align}
-%     \sum^{\infty}_{k=0} \gamma^{k} (\bm{x}_{k}^\top Q \bm{x}_{k} + \bm{u}_{k}^\top R \bm{u}_{k})
-%     \label{eq:cost_equation}
-% \end{align}
-% を最小にするような制御器を設計する問題を考える．ただし，$Q \in \mathbb{R}^{n \times n}, R \in \mathbb{R}^{m \times m}$はそれぞれ半正定値，正定値行列であり，$\gamma \in (0, 1)$は
-% %割引率と呼ばれる
-% 定数である．
-% この問題に対し，\rfig{fig:proposed_method}で表される制御器の設計を2つのステップに分けて行う．
-
-% Step~1ではまず，既知の安定なフィードバックゲイン$K^{\mathrm{init}}$を用い，探索項を印加しながらシステムを動かすことで入力と状態の時系列データを取得する．
-% その後，ベルマン方程式から導出される関係式
-% \begin{align}
-% F ^j [\textrm{vec}(G^{j+1}_1)^\top ,\textrm{vec}(G^{j+1}_2)^\top ,\textrm{vec}(G^{j+1}_3)^\top]^\top=\bm{h}^j
-% \label{update_equation}
-% \end{align}
-% によって$G^{j+1}_i,~i=1,2,3$
-% を更新し，
-% $K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}$
-% % \begin{align}
-% %     K^{j+1}=-(R+G_3^{j+1})^{-1}G_2^{j+1}
-% % \end{align}
-% に代入することで
-% %フィードバックゲイン
-% $K^j$の更新を行う．
-% ただし，$\bm{h}^{j}$は各時刻における
-% 二次コストに関するベクトル，
-% $F^{j}$は入力と状態に関する行列，
-% $G^{j+1}_i$は
-% コスト関数に関する行列であり，
-% $F^j,~ \bm{h}^j$は取得した時系列データと$K^j$から計算される．
-% $||K^j-K^{j-1}||$が閾値以下になったら更新を終了し，このときの$K^j$を$K^{\rm{AC}}$とする．更新される$K^{j}$は，準最適線形LQR制御則に収束する．
-
-% Step~2では，Step~1で設計された線形制御器と並列に繋げた非線形制御則$\bm{\mu}$を強化学習の一種であるActor-Critic法\cite{Sutton_RL}によって設計する．
-% 線形制御則$K^{\rm{AC}}$が存在することで，学習中にシステムが不安定になることを防ぎ，損耗を防ぐことができる．
-% この二段階の設計手法による制御則は，線形制御則だけでは実現できない性能を達成する．
+である．ここで，時刻$t=0$に放出された分子が時刻$t$，位置$[\xi,\xi+d\xi)$に存在する確率を
+$p_0(\xi,t)$とするとき，$p(\xi,t-t_0|t_0)=$$p_0(\xi,t)$
+が成立するため，分子の到達確率分布は放出時刻だけ時間移動する．
+これを利用して，受信細胞で生成されたシグナル分子の放出時刻を用いて到達確率分布を計算し，
+RDSSA\cite{hara}を適用することで相互通信を行うことができる．
 
 \section{数値例による検証}
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\columnwidth] {figures/Images.pdf}
-    \caption{Image of 1 dimension Molecular Communication System}
+    \includegraphics[width=0.8\columnwidth] {figures/Images.pdf}
+    \caption{Image of Molecular Communication System}
     \label{fig:image}
 \end{figure}
-Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$3.0\times10^{-4}$，細胞間距離を$L$とする．
+Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$\SI{3.0e-4}{\milli\meter\squared\per\minute}$，細胞間距離を$L$とする．
 ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
 \begin{equation}
     \emptyset \xrightarrow{k_1} \mathrm{A},\mathrm{X}+\mathrm{A} \xrightarrow{k_2} \mathrm{B}, \mathrm{B} \xrightarrow{k_3} \emptyset, \mathrm{B}+\mathrm{B}\xrightarrow{k_4} \mathrm{B:B} +\mathrm{Y}
@@ -168,35 +118,33 @@ Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分�
 \end{equation}
 この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，細胞$1$における分子$\mathrm{B}$の時間発展を$10^4$回シミュレーションし，
 その平均を$L=\SI{0.1}{\um},$ $\SI{0.2}{\um},$ $\SI{0.3}{\um},$ $\SI{0.4}{\um},$ $\SI{0.5}{\um}$に対して計算した．
-ただし，$k_1 = \SI{5.0}{\per\mm}$，$k_2 = \log(2)/20\ \si{\per\mm}$，$k_3=k_4=k_5=\SI{0.02}{\per\mm}$とした．
+ただし，$k_1 = \SI{5.0}{\per\minute}$，$k_2 = \log(2)/20\ \si{\per\minute}$，$k_3=k_4=k_5=\SI{0.02}{\per\minute}$とした．
 この時，各$L$に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
 Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B}$の過渡応答が急峻であり，距離依存性を持つことが確認できる．
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\columnwidth]{figures/figure_name.pdf}
+    \includegraphics[width=0.8\columnwidth]{figures/figure_name.pdf}
     \caption{Comparison of the time evolution of the average number of B among each $L$}
     \label{fig:simulation}
 \end{figure}
 
 
 \section{結論と今後の展望}
-本稿では，相互通信可能な分子通信系のシミュレーション法による密度依存性の検証に向けて，
-相互通信可能な１次元の分子通信系の数値シミュレーションを行った．
-具体的には，送信細胞と受信細胞が固定されたシミュレーション法に対して，
-シグナル分子の到達確率分布が分子の放出時刻だけシフトすることを利用して
-相互通信可能な分子通信系のシミュレーションを提案した．
-今後の展望としては，現在のシミュレーション法を利用して2次元の相互通信する分子通信系に対して
-複数の濃度におけるシミュレーションを行い，濃度依存性の検証を行う．
+本稿では，RDSSA\cite{hara}に対して，
+シグナル分子が到達する確率分布が分子の放出時刻だけシフトすることを利用して
+相互通信可能な分子通信系のシミュレーションを構築した．
+今後の展望としては，現在の手法を利用し，2次元の相互通信する分子通信系に対してシミュレーションを行い，濃度依存性の検証を行う．
 
 
 
 \begin{thebibliography} {99}
-    \bibitem{Sutton_RL} R. S. Sutton {\it et al}., %Reinforcement learning: An introduction,
-    2nd ed. { \it MIT Press}, 2018.
-    \bibitem{Kiumarsi2018} B. Kiumarsi {\it et al}., 
+    \bibitem{Yamagishi} M. Yamagishi {\it et al}., %Reinforcement learning: An introduction,
+    { \it International Symposium on Micro-NanoMechatronics and Human Science}, pp. 1-5, 2018.
+    %\bibitem{Kiumarsi2018} B. Kiumarsi {\it et al}., 
     %“Opti-mal and autonomous control using reinforcement learning: A survey, ”
-    {\it IEEE Transactions on Neural Networks and Learning Systems}, vol. 29, no. 6, pp. 2042–2062, 2018.
+    %{\it IEEE Transactions on Neural Networks and Learning Systems}, vol. 29, no. 6, pp. 2042–2062, 2018.
+    \bibitem{hara} 原星周,\ 慶應義塾大学修士論文,\ pp.1--50,\ 2023.
 \end{thebibliography}
 
 \end{document}
