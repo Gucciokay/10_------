@@ -43,6 +43,7 @@
 %%packages related to figures and tables
 \usepackage{wrapfig}
 \usepackage{subcaption}
+\captionsetup[subfigure]{position=top, labelformat=parens, textfont=normalfont, labelfont=bf}
 \usepackage{here}
 %\usepackage{multirow}
 %\usepackage{slashbox}
@@ -101,7 +102,7 @@ RDSSA\cite{hara}を適用することで相互通信を行うことができる�
 
 \section{数値例による検証}
 Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$\SI{3.0e-4}{\milli\meter\squared\per\minute}$，細胞間距離を$L$とする．
-ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
+ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$，$\mathrm{B:B}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
 \begin{equation}
     \emptyset \xrightarrow{k_1} \mathrm{A},\mathrm{X}+\mathrm{A} \xrightarrow{k_2} \mathrm{B}, \mathrm{B} \xrightarrow{k_3} \emptyset, \mathrm{B}+\mathrm{B}\xrightarrow{k_4} \mathrm{B:B} +\mathrm{Y}
 \end{equation}
@@ -123,11 +124,10 @@ Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B
 \end{figure}
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.8\columnwidth]{figures/figure_name.pdf}
-    \caption{Comparison of the time evolution of the average number of B among each $L$}
+    \includegraphics[width=\columnwidth]{figures/simulation_a_and_b.pdf}
+    \caption{(a) Time evolution of the average number of each molecules (b) Comparison of the time evolution of the average number of B among each $L$}
     \label{fig:simulation}
 \end{figure}
-
 
 \section{結論と今後の展望}
 本稿では，RDSSA\cite{hara}に対して，
