@@ -66,7 +66,7 @@
 
 
 \jtitle{\fontsize{13pt}{0pt}RDSSAを用いた相互に通信する分子通信系シミュレーション法構築}
-\etitle{The Construction of Simulation Method for Mutual Molecular Communication System \\ using RDSSA}
+\etitle{Construction of Simulation Method for Mutual Molecular Communication System \\ using RDSSA}
 \lab{堀}
 \no{82411805}
 \name{川口竜輝}
@@ -82,7 +82,7 @@
 分子通信系においては，系内部の細胞濃度が系全体の状態に大きな影響を与えることが知られている\cite{Yamagishi}が，
 情報として受け取る各細胞内部の分子数変化をシミュレーションする手法は計算時間が長いという課題があった．
 そこで，細胞内部の分子数変化を高速に計算するReaction-Diffusion Stochastic Simulation Algorithm (RDSSA)\cite{hara}がつくられたが，
-相互通信するうえで送信細胞と受信細胞が区別されているという問題があった．
+相互通信するうえで送信細胞と受信細胞が区別されているため，双方向の通信ができないという問題があった．
 そこで，本研究ではシグナル分子が到達する確率分布が分子の放出時刻
 だけ時間変化する点に着目し，RDSSA\cite{hara}に適用させることで，
 相互に通信する分子通信系をシミュレーションし，その濃度依存性を検証する．
@@ -100,12 +100,6 @@ $p_0(\xi,t)$とするとき，$p(\xi,t-t_0|t_0)=$$p_0(\xi,t)$
 RDSSA\cite{hara}を適用することで相互通信を行うことができる．
 
 \section{数値例による検証}
-\begin{figure}[tb]
-    \centering
-    \includegraphics[width=0.8\columnwidth] {figures/Images.pdf}
-    \caption{Image of Molecular Communication System}
-    \label{fig:image}
-\end{figure}
 Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$\SI{3.0e-4}{\milli\meter\squared\per\minute}$，細胞間距離を$L$とする．
 ここで細胞1内部には分子$\mathrm{A}$，$\mathrm{B}$，$\mathrm{X}$が存在し，次の細胞内部の反応によってシグナル分子$\mathrm{Y}$を放出する．
 \begin{equation}
@@ -121,7 +115,13 @@ Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分�
 この時，各$L$に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
 Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B}$の過渡応答が急峻であり，距離依存性を持つことが確認できる．
 
-\begin{figure}[tb]
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\columnwidth] {figures/Images.pdf}
+    \caption{Image of Molecular Communication System}
+    \label{fig:image}
+\end{figure}
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.8\columnwidth]{figures/figure_name.pdf}
     \caption{Comparison of the time evolution of the average number of B among each $L$}
