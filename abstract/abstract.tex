@@ -43,7 +43,6 @@
 %%packages related to figures and tables
 \usepackage{wrapfig}
 \usepackage{subcaption}
-\captionsetup[subfigure]{position=top, labelformat=parens, textfont=normalfont, labelfont=bf}
 \usepackage{here}
 %\usepackage{multirow}
 %\usepackage{slashbox}
@@ -61,8 +60,8 @@
 % \newcommand{\rfig}[1]{Fig.~\ref{#1}}
 % \newcommand{\req}[1]{式\eqref{#1}}
 %%command to erase trivial cautions  
-\DeclareFontShape{JY1}{hmc}{b}{n}{<->ssub*hmc/bx/n}{} % Font shape `JY1/hmc/b/n' undefined (Font) using `JY1/hmc/bx/n' instead.のエラーメッセージを消すコマンド．
-\DeclareFontShape{JT1}{hmc}{b}{n}{<->ssub*hmc/m/n}{} %LaTeX Font: Font shape `JT1/hmc/b/n' undefined　(Font)	using `JT1/hmc/m/n' instead.のエラーメッセージを消すコマンド．
+% \DeclareFontShape{JY1}{hmc}{b}{n}{<->ssub*hmc/bx/n}{} % Font shape `JY1/hmc/b/n' undefined (Font) using `JY1/hmc/bx/n' instead.のエラーメッセージを消すコマンド．
+% \DeclareFontShape{JT1}{hmc}{b}{n}{<->ssub*hmc/m/n}{} %LaTeX Font: Font shape `JT1/hmc/b/n' undefined　(Font)	using `JT1/hmc/m/n' instead.のエラーメッセージを消すコマンド．
 %%
 
 
@@ -75,18 +74,16 @@
 \maketitle
 
 \section{研究背景・目的}
-細胞は伝達物質であるシグナル分子を別の細胞に送り，細胞内で化学反応が発生し，
-それによる濃度変化を情報として伝達する．
-このような細胞間で情報を相互に伝達する系は分子通信系と呼ばれる．
-分子通信系では，系内部の分子が少数であるため，化学反応や分子の伝達が確率的におこり，
-細胞内部の分子数変化が情報となる．
-分子通信系においては，系内部の細胞濃度が系全体の状態に大きな影響を与えることが知られている\cite{Yamagishi}が，
-情報として受け取る各細胞内部の分子数変化をシミュレーションする手法は計算時間が長いという課題があった．
-そこで，細胞内部の分子数変化を高速に計算するReaction-Diffusion Stochastic Simulation Algorithm (RDSSA)\cite{hara}がつくられたが，
-相互通信するうえで送信細胞と受信細胞が区別されているため，双方向の通信ができないという問題があった．
+細胞は別の細胞から放出された伝達物質であるシグナル分子が到達すると分子を吸収し，細胞内部で化学反応が発生する．
+分子通信系はこの機構を相互に行い，分子数の勾配を情報として伝達する．
+分子通信系では，系内部の分子が少数であるため，確率的に反応や分子の到達が発生し，
+系内部の細胞濃度が細胞内の状態に影響を与えることが知られている\cite{Yamagishi}．
+しかし，この現象をシミュレーションする手法は系の空間全体をシミュレーションするため計算時間が長いという課題があった．
+そこで，シグナル分子の到達細胞内部の分子数変化を高速に計算するシミュレーション法\cite{hara}が構築されたが，
+送信細胞と受信細胞が区別されているため，双方向の通信ができないという問題があった．
 そこで，本研究ではシグナル分子が到達する確率分布が分子の放出時刻
-だけ時間変化する点に着目し，RDSSA\cite{hara}に適用させることで，
-相互に通信する分子通信系をシミュレーションし，その濃度依存性を検証する．
+だけ時間変化する点に着目し，計算した確率分布を
+相互に通信する分子通信系のシミュレーション法を提案する．
 
 \section{相互通信可能な分子通信系}
 1次元の分子通信系において，時刻$t=t_0$に放出された分子が時刻$t$，位置$[\xi,\xi+d\xi)$に存在する確率を
@@ -97,8 +94,7 @@ $p(\xi,t|t_0)$とするとき，$p(\xi,t|t_0)$は拡散方程式に従い，分�
 である．ここで，時刻$t=0$に放出された分子が時刻$t$，位置$[\xi,\xi+d\xi)$に存在する確率を
 $p_0(\xi,t)$とするとき，$p(\xi,t-t_0|t_0)=$$p_0(\xi,t)$
 が成立するため，分子の到達確率分布は放出時刻だけ時間移動する．
-これを利用して，受信細胞で生成されたシグナル分子の放出時刻を用いて到達確率分布を計算し，
-RDSSA\cite{hara}を適用することで相互通信を行うことができる．
+この性質を利用し，受信細胞で生成されたシグナル分子の放出時刻を用いて到達確率分布を計算することで相互通信する分子通信系のシミュレーションを構築する．
 
 \section{数値例による検証}
 Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分子通信系を考える．ただし，系の拡散係数$\mu=$$\SI{3.0e-4}{\milli\meter\squared\per\minute}$，細胞間距離を$L$とする．
@@ -110,10 +106,11 @@ Fig. \ref{fig:image}にあるように，細胞が2つ存在する1次元の分�
 \begin{equation}
     \mathrm{Y} \xrightarrow{k_5} \mathrm{X}
 \end{equation}
-この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，細胞$1$における分子$\mathrm{B}$の時間発展を$10^4$回シミュレーションし，
-その平均を$L=\SI{0.1}{\um},$ $\SI{0.2}{\um},$ $\SI{0.3}{\um},$ $\SI{0.4}{\um},$ $\SI{0.5}{\um}$に対して計算した．
-ただし，$k_1 = \SI{5.0}{\per\minute}$，$k_2 = \log(2)/20\ \si{\per\minute}$，$k_3=k_4=k_5=\SI{0.02}{\per\minute}$とした．
-この時，各$L$に対する分子Bの時間発展をFig. \ref{fig:simulation}に示す．
+この時，時刻$t=0$において細胞$1$から分子$\mathrm{Y}$が$10^2$個放出されたとき，
+細胞$1$，細胞$2$における分子の時間発展を$10^4$回シミュレーションした結果をFig. \ref{fig:simulation} (a)に示す．
+ただし，$k_1 = \SI{0.8}{\per\minute}$，$k_2 = \log(2)/20\ \si{\per\minute}$，$k_3=k_4=k_5=\SI{0.02}{\per\minute}$，$L=\SI{0.1}{\micro\meter}$とした．
+Fig. \ref{fig:simulation} (a)より，分子$\mathrm{X}$が遅れて増加していることが確認でき，定性的な結果と一致する．
+また，$L=\SI{0.1}{\um},$ $\SI{0.2}{\um},$ $\SI{0.3}{\um},$ $\SI{0.4}{\um},$ $\SI{0.5}{\um}$に対する分子$\mathrm{B}$の時間発展をそれぞれ$10^4$回計算した結果をFig. \ref{fig:simulation} (b)に示す．
 Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B}$の過渡応答が急峻であり，距離依存性を持つことが確認できる．
 
 \begin{figure}[t]
@@ -125,14 +122,13 @@ Fig. \ref{fig:simulation}より，細胞間距離が短いほど分子$\mathrm{B
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/simulation_a_and_b.pdf}
-    \caption{(a) Time evolution of the average number of each molecules (b) Comparison of the time evolution of the average number of B among each $L$}
+    \caption{(a) Time evolution of the average number of each molecules  (b) Comparison of the time evolution of the average number of B among each $L$}
     \label{fig:simulation}
 \end{figure}
 
 \section{結論と今後の展望}
-本稿では，RDSSA\cite{hara}に対して，
-シグナル分子が到達する確率分布が分子の放出時刻だけシフトすることを利用して
-相互通信可能な分子通信系のシミュレーションを構築した．
+本稿では，シグナル分子が到達する確率分布が分子の放出時刻だけシフトすることを利用して
+相互通信可能な分子通信系のシミュレーション法を構築した．
 今後の展望としては，現在の手法を利用し，2次元の相互通信する分子通信系に対してシミュレーションを行い，濃度依存性の検証を行う．
 
 
